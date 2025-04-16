@@ -7,7 +7,8 @@ public class BaseCharacterController : MonoBehaviour
 {
 
     private Vector2 movementInput;
-    [SerializeField] float movementSpeed;
+    [SerializeField] private float movementSpeed;
+    [Range(0,1)][SerializeField] private float slowedFactor;
     private bool isSlowed;
 
     private void Start()
@@ -20,7 +21,10 @@ public class BaseCharacterController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        transform.Translate(new Vector3(movementInput.x, movementInput.y, 0) * Time.deltaTime * movementSpeed);
+        var actualMovementSpeed = movementSpeed;
+        if (isSlowed) actualMovementSpeed *= slowedFactor;
+
+        transform.Translate(new Vector3(movementInput.x, movementInput.y, 0) * Time.deltaTime * actualMovementSpeed);
     }
     private void OnTriggerStay2D(Collider2D col)
     {
