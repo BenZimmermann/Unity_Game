@@ -9,11 +9,14 @@ public class BaseCharacterController : MonoBehaviour
     private Vector2 movementInput;
     [SerializeField] private float movementSpeed;
     [Range(0,1)][SerializeField] private float slowedFactor;
+    [Range(0, 5)][SerializeField] private float fastFactor;
     private bool isSlowed;
+    private bool isFast;
 
     private void Start()
     {
         isSlowed = false;
+        isFast = false;
     }
     public void Movement(CallbackContext ctx)
     {
@@ -23,6 +26,7 @@ public class BaseCharacterController : MonoBehaviour
     {
         var actualMovementSpeed = movementSpeed;
         if (isSlowed) actualMovementSpeed *= slowedFactor;
+        if (isFast) actualMovementSpeed += fastFactor;
 
         transform.Translate(new Vector3(movementInput.x, movementInput.y, 0) * Time.deltaTime * actualMovementSpeed);
     }
@@ -32,12 +36,20 @@ public class BaseCharacterController : MonoBehaviour
         {
             isSlowed = true;
         }
+        if (col.gameObject.CompareTag("grass"))
+        {
+            isFast = true;
+        }
     }
     private void OnTriggerExit2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Swamp"))
         {
             isSlowed = false;
+        }
+        if (col.gameObject.CompareTag("grass"))
+        {
+            isFast = false;
         }
     }
 }
